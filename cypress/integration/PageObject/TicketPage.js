@@ -2,13 +2,13 @@ import dayjs from 'dayjs'
 class TicketPage{
    constructor(){}
     clickTimeVisit(){
-        cy.visit('https://dev.corebyppmg.com/app/login.aspx?ReturnUrl=%2fapp%2flogin.aspx%3flogout%3d1');
+        cy.visit('');
     }
     
 
     checkLink() {
         cy.url().should('include', '/login')
-        cy.url().should('eq', 'https://ct.digitaltolk.se/login')
+        cy.url().should('eq', '')
         cy.get('.brand-logo').should('be.visible');
      }
 
@@ -19,10 +19,10 @@ class TicketPage{
      }
 
     userlogin(){
-        cy.get('#Password').type('thrill@progradesolutions.com')
-        cy.get('#UserName').type('Password_123').type('{enter}')
+        cy.get('#Password').type('')
+        cy.get('#UserName').type('').type('{enter}')
     }
-
+          ///select upcoming date and time 
     selectTime(){
         let now = dayjs();
         var d1 = now.add('8','hours').add('25','minutes').add('20','seconds').format("HH:mm")
@@ -30,7 +30,14 @@ class TicketPage{
         feild.click({ force: true })
         feild.type(d1)   
     }
-    
+
+     selectDate(){
+        let now = dayjs();
+        var d2 = now.add('8','years').add('25','months').add('20','days').format("DD-MM-YYYY")
+        const feild = cy.get('#pane-default > div > div > form > div.el-row.is-justify-center.is-align-middle > div:nth-child(3) > div > div > div > div.el-input.el-input--suffix > input')
+        feild.click({ force: true })
+        feild.type(d1)   
+    }
 
     
 }
