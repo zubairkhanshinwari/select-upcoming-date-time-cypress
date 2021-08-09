@@ -4,6 +4,7 @@ class TicketPage{
     clickTimeVisit(){
         cy.visit('https://dev.corebyppmg.com/app/login.aspx?ReturnUrl=%2fapp%2flogin.aspx%3flogout%3d1');
     }
+    
 
     checkLink() {
         cy.url().should('include', '/login')
