@@ -36,7 +36,8 @@ class TicketPage{
         var d2 = now.add('8','years').add('25','months').add('20','days').format("DD-MM-YYYY")
         const feild = cy.get('#pane-default > div > div > form > div.el-row.is-justify-center.is-align-middle > div:nth-child(3) > div > div > div > div.el-input.el-input--suffix > input')
         feild.click({ force: true })
-        feild.type(d1)   
+        feild.type(d1) 
+        //  
     }
 
     
