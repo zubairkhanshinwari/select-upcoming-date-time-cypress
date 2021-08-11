@@ -37,7 +37,7 @@ class TicketPage{
         const feild = cy.get('#pane-default > div > div > form > div.el-row.is-justify-center.is-align-middle > div:nth-child(3) > div > div > div > div.el-input.el-input--suffix > input')
         feild.click({ force: true })
         feild.type(d1) 
-        //changes done
+       
           
     }
 
