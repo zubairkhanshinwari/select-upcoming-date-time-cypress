@@ -10,7 +10,7 @@
   "license": "ISC",
   "devDependencies": {
     "cypress": "^8.2.0"
-  }
+  },
   
   "scripts": {
         "dev": "npm run development",
