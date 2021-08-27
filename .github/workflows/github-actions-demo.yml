@@ -14,5 +14,7 @@ jobs:
       - name: Cypress run
         uses: cypress-io/github-action@v2
         with:
+          npm:   npm cache clean --force
+          npms:   npm install -g @angular/cli
           build: npm run build
           start: npm start
