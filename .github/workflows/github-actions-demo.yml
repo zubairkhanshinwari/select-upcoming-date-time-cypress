@@ -1,32 +1,16 @@
 
-name: Cypress Tests with Dependency and Artifact Caching
-
+name: example-quiet
 on: [push]
-
 jobs:
-  # install:
-  # ....
   cypress-run:
     runs-on: ubuntu-latest
-    container: cypress/browsers:node12.18.3-chrome87-ff82
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-
-      - name: Download the build folders
-        uses: actions/upload-artifact@v1
-        with:
-          name: report
-          path: robot/tests/report.html
-
       # Install NPM dependencies, cache them correctly
-      # and run all Cypress tests
+      # and run all Cypress tests with `quiet` parameter
       - name: Cypress run
-        uses: cypress-io/github-action@v2
+        uses: ./
         with:
-          # Specify Browser since container image is compile with Firefox
-          browser: firefox
-          build: yarn build
-          npm:   npm cache clean --force
-          npms:   npm install -g @angular/cli
-          start: npm start
+          working-directory: examples/quiet
+          quiet: true
