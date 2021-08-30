@@ -1,16 +1,16 @@
 
-name: example-quiet
+name: End-to-end tests
 on: [push]
 jobs:
   cypress-run:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: google-github-actions/setup-gcloud@master
-      # Install NPM dependencies, cache them correctly
-      # and run all Cypress tests with `quiet` parameter
+        uses: actions/checkout@v1
+
       - name: Cypress run
-        uses: ./
+        uses: cypress-io/github-action@v1
         with:
-          working-directory: examples/quiet
-          quiet: true
+          build: npm run build
+          start: npm start
+          wait-on: http://localhost:3030
