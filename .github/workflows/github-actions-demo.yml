@@ -1,36 +1,75 @@
-jobs: end-to-end-tests:
-    name: End-to-End tests (web)
-    runs-on:  ubuntu-latest
-    if: github.event.pull_request.draft == false
+name: example-chrome
+on: [push]
+jobs:
+  tests:
+    runs-on: ubuntu-latest
     steps:
-      ## Start Shared Setup
-      - name: checkout gather
-        uses: actions/checkout@v2
+      - name: Checkout
+        uses: actions/checkout@v1
 
-      - name: setup node
-        uses: actions/setup-node@v2-beta
+      - name: Cypress info
+        uses: ./
         with:
-          node-version: 12.18.3
+          # just for full picture after installing Cypress
+          # print information about detected browsers, etc
+          # see https://on.cypress.io/command-line#cypress-info
+          build: npx cypress info
+          working-directory: examples/chrome
 
-      - uses: bahmutov/npm-install@HEAD
-      ## End Shared Setup
-
-      - name: cypress in chrome
-        uses: cypress-io/github-action@v1
+      - name: Electron
+        uses: ./
         with:
+          working-directory: examples/chrome
+
+      # store screenshot captured during the test
+      - uses: actions/upload-artifact@v1
+        with:
+          name: screenshots-in-electron
+          path: examples/chrome/cypress/screenshots
+
+      - run: npx image-size cypress/screenshots/**/*.png
+        working-directory: examples/chrome
+
+      - name: Chrome
+        uses: ./
+        with:
+          working-directory: examples/chrome
+          browser: chrome
+
+      - uses: actions/upload-artifact@v1
+        with:
+          name: screenshots-in-chrome
+          path: examples/chrome/cypress/screenshots
+
+      - uses: actions/upload-artifact@v1
+        with:
+          name: video-in-chrome
+          path: examples/chrome/cypress/videos
+
+      - run: npx image-size cypress/screenshots/**/*.png
+        working-directory: examples/chrome
+
+      # I wonder if GH Actions VM includes any of the tools that
+      # can tell us the resolution of a video file
+      - run: ffprobe cypress/videos/*.mp4 || true
+      - run: mplayer -really-quiet -ao null -vo null -identify -frames 0 cypress/videos/*.mp4 || true
+
+      - name: Chrome headless
+        uses: ./
+        with:
+          working-directory: examples/chrome
           browser: chrome
           headless: true
-      - name: upload failure screenshots
-        uses: actions/upload-artifact@v1
-        if: failure()
-        with:
-          name: cypress-screenshots
-          path: cypress/screenshots
-      - name: upload failure videos
-        uses: actions/upload-artifact@v1
-        if: failure()
-        with:
-          name: cypress-videos
-          path: cypress/videos
-         
 
+      - uses: actions/upload-artifact@v1
+        with:
+          name: screenshots-in-headless-chrome
+          path: examples/chrome/cypress/screenshots
+
+      - uses: actions/upload-artifact@v1
+        with:
+          name: video-in-headless-chrome
+          path: examples/chrome/cypress/videos
+
+      - run: npx image-size cypress/screenshots/**/*.png
+        working-directory: examples/chrome
