@@ -1,45 +1,82 @@
-name: example-chrome
+name: example-basic
 on: [push]
 jobs:
-  tests:
-    runs-on: ubuntu-latest
+  # note: Ubuntu 16 probably works, but is deprecated
+
+  basic-ubuntu-18:
+    runs-on: ubuntu-18.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v1
+        uses: actions/checkout@v2
 
-      - name: Cypress info
+      - name: Cypress tests
+        # normally you would write
+        # uses: cypress-io/github-action@v2
         uses: ./
+        # the parameters below are only necessary
+        # because we are running these examples in a monorepo
         with:
+          working-directory: examples/basic
           # just for full picture after installing Cypress
           # print information about detected browsers, etc
           # see https://on.cypress.io/command-line#cypress-info
           build: npx cypress info
-          working-directory: examples/chrome
 
-      - name: Electron
+  basic-ubuntu-20:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Cypress tests
         uses: ./
         with:
-          working-directory: examples/chrome
+          working-directory: examples/basic
+          build: npx cypress info
 
-      # store screenshot captured during the test
-      - uses: actions/upload-artifact@v1
-        with:
-          name: screenshots-in-electron
-          path: examples/chrome/cypress/screenshots
+  basic-on-windows:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
 
-      - run: npx image-size cypress/screenshots/**/*.png
-        working-directory: examples/chrome
-
-      - name: Chrome
+      - name: Cypress tests
         uses: ./
         with:
-          working-directory: examples/chrome
-          browser: chrome
+          working-directory: examples/basic
+          build: npx cypress info
 
-      - uses: actions/upload-artifact@v1
+  basic-on-mac:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Cypress tests
+        uses: ./
         with:
-          name: screenshots-in-chrome
-          path: examples/chrome/cypress/screenshots
+          working-directory: examples/basic
+          build: npx cypress info
+
+  # skips the binary installation
+  # shows that the job should not fail
+  # https://github.com/cypress-io/github-action/issues/327
+  basic-without-binary-install:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Cypress tests
+        uses: ./
+        with:
+          working-directory: examples/basic
+          # since we do not install Cypress
+          # we should not attempt to run tests
+          runTests: false
+        env:
+          # skip the binary install
+          CYPRESS_INSTALL_BINARY: 0
 
       - uses: actions/upload-artifact@v1
         with:
