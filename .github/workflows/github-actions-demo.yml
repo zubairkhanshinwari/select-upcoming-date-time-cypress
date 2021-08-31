@@ -1,112 +1,17 @@
-name: example-basic
+name: Cypress Tests
+
 on: [push]
+
 jobs:
-  # note: Ubuntu 16 probably works, but is deprecated
-
-  basic-ubuntu-18:
-    runs-on: ubuntu-18.04
+  cypress-run:
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-
-      - name: Cypress tests
-        # normally you would write
-        # uses: cypress-io/github-action@v2
-        uses: ./
-        # the parameters below are only necessary
-        # because we are running these examples in a monorepo
+      # Install NPM dependencies, cache them correctly
+      # and run all Cypress tests
+      - name: Cypress run
+        uses: cypress-io/github-action@v2
         with:
-          working-directory: examples/basic
-          # just for full picture after installing Cypress
-          # print information about detected browsers, etc
-          # see https://on.cypress.io/command-line#cypress-info
-          build: npx cypress info
-
-  basic-ubuntu-20:
-    runs-on: ubuntu-20.04
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-
-      - name: Cypress tests
-        uses: ./
-        with:
-          working-directory: examples/basic
-          build: npx cypress info
-
-  basic-on-windows:
-    runs-on: windows-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-
-      - name: Cypress tests
-        uses: ./
-        with:
-          working-directory: examples/basic
-          build: npx cypress info
-
-  basic-on-mac:
-    runs-on: macos-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-
-      - name: Cypress tests
-        uses: ./
-        with:
-          working-directory: examples/basic
-          build: npx cypress info
-
-  # skips the binary installation
-  # shows that the job should not fail
-  # https://github.com/cypress-io/github-action/issues/327
-  basic-without-binary-install:
-    runs-on: ubuntu-20.04
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-
-      - name: Cypress tests
-        uses: ./
-        with:
-          working-directory: examples/basic
-          # since we do not install Cypress
-          # we should not attempt to run tests
-          runTests: false
-        env:
-          # skip the binary install
-          CYPRESS_INSTALL_BINARY: 0
-
-      - uses: actions/upload-artifact@v1
-        with:
-          name: video-in-chrome
-          path: examples/chrome/cypress/videos
-
-      - run: npx image-size cypress/screenshots/**/*.png
-        working-directory: examples/chrome
-
-      # I wonder if GH Actions VM includes any of the tools that
-      # can tell us the resolution of a video file
-      - run: ffprobe cypress/videos/*.mp4 || true
-      - run: mplayer -really-quiet -ao null -vo null -identify -frames 0 cypress/videos/*.mp4 || true
-
-      - name: Chrome headless
-        uses: ./
-        with:
-          working-directory: examples/chrome
-          browser: chrome
-          headless: true
-
-      - uses: actions/upload-artifact@v1
-        with:
-          name: screenshots-in-headless-chrome
-          path: examples/chrome/cypress/screenshots
-
-      - uses: actions/upload-artifact@v1
-        with:
-          name: video-in-headless-chrome
-          path: examples/chrome/cypress/videos
-
-      - run: npx image-size cypress/screenshots/**/*.png
-        working-directory: examples/chrome
+          build: npm run build
+          start: npm start
